@@ -1,0 +1,54 @@
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: cji-smoke-test
+spec:
+  params:
+    - name: component-name
+      type: string
+      description: name of ClowdApp to run tests against /  app-sre "resourceTemplate"
+    - name: iqe-cji-timeout
+      type: string
+      description: timeout value to pass to the CJI test, should be slightly higher than expected test run time
+      default: "10m"
+    - name: iqe-marker-expression
+      type: string
+      description: "something AND something_else -- pytest marker, can be \"\" if no filter desired"
+      default: ""
+    - name: iqe-filter-expression
+      type: string
+      description: "something AND something_else -- pytest filter, can be \"\" if no filter desired"
+      default: ""
+    - name: iqe-image-tag
+      type: string
+      description: "something -- image tag to use for IQE pod, leave unset to use ClowdApp's iqePlugin value"
+      default: "10m"
+    - name: iqe-requirements
+      type: string
+      description: "something,something_else -- iqe requirements filter, can be \"\" if no filter desired"
+      default: ""
+    - name: iqe-requirements-priority
+      type: string
+      description: "something,something_else -- iqe requirements priorities filter, can be \"\" if no filter desired"
+      default: ""
+    - name: iqe-test-importance
+      type: string
+      description: "something,something_else -- iqe test importance filter, can be \"\" if no filter desired"
+      default: ""
+    - name: iqe-plugins
+      type: string
+      description: "plugin1,plugin2 -- IQE plugins to run tests for, leave unset to use ClowdApp's iqePlugin value"
+    - name: iqe-env
+      type: string
+      description: "something -- value to set for ENV_FOR_DYNACONF, default is \"clowder_smoke\""
+      default: "clowder_smoke"
+    - name: iqe-selenium
+      type: string
+      description: "true -- whether to run IQE pod with a selenium container, default is false"
+      default: "false"
+    - name: namespace
+      type: string
+      description: "mynamespace -- namespace to deploy iqe pod into, usually already set by 'deploy_ephemeral_env.sh'"
+    - name: artifacts-dir
+      type: string
+      description: directory where test run artifacts are stored
