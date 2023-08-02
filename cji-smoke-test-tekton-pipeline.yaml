@@ -52,3 +52,75 @@ spec:
     - name: artifacts-dir
       type: string
       description: directory where test run artifacts are stored
+  tasks:
+    - name: call-bonfire
+      params:
+        - name: component-name
+          value: "$(params.component-name)"
+        - name: iqe-marker-expression
+          value: "$(params.iqe-marker-expression)"
+        - name: iqe-filter-expression
+          value: "$(params.iqe-filter-expression)"
+        - name: iqe-image-tag
+          value: "$(params.iqe-image-tag)"
+        - name: iqe-requirements
+          value: "$(params.iqe-requirements)"
+        - name: iqe-requirements-priority
+          value: "$(params.iqe-requirements-priority)"
+        - name: iqe-test-importance
+          value: "$(params.iqe-test-importance)"
+        - name: iqe-plugins
+          value: "$(params.iqe-plugins)"
+        - name: iqe-env
+          value: "$(params.iqe-env)"
+        - name: iqe-selenium
+          value: "$(params.iqe-selenium)"
+        - name: namespace
+          value: "$(params.namespace)"
+      taskSpec:
+        steps:
+          - name: run-script
+            env:
+              - name: COMPONENT_NAME
+                value: (params.component-name)
+              - name: IQE_MARKER_EXPRESSION
+                value: (params.iqe-marker-expression)
+              - name: IQE_FILTER_EXPRESSION
+                value: (params.iqe-filter-expression)
+              - name: IQE_IMAGE_TAG
+                value: (params.iqe-image-tag)
+              - name: IQE_REQUIREMENTS
+                value: (params.iqe-requirements)
+              - name: IQE_REQUIREMENTS_PRIORITY
+                value: (params.iqe-requirements-priority)
+              - name: IQE_TEST_IMPORTANCE
+                value: (params.iqe-test-importance)
+              - name: IQE_PLUGINS
+                value: (params.iqe-plugins)
+              - name: IQE_ENV
+                value: (params.iqe-env)
+              - name: CJI_NAME
+                value: (params.component-name)
+              - name: IQE_SELENIUM
+                value: (params.iqe-selenium)
+              - name: NAMESPACE
+                value: (params.namespace)
+            image: quay.io/ernesgonzalez33/bonfire:latest
+            script: |
+              SELENIUM_ARG=""
+              if [ "$IQE_SELENIUM" = "true" ]; then
+                  SELENIUM_ARG=" --selenium "
+              fi
+
+              bonfire deploy-iqe-cji $COMPONENT_NAME \
+              --marker "$IQE_MARKER_EXPRESSION" \
+              --filter "$IQE_FILTER_EXPRESSION" \
+              --image-tag "${IQE_IMAGE_TAG}" \
+              --requirements "$IQE_REQUIREMENTS" \
+              --requirements-priority "$IQE_REQUIREMENTS_PRIORITY" \
+              --test-importance "$IQE_TEST_IMPORTANCE" \
+              --plugins "$IQE_PLUGINS" \
+              --env "$IQE_ENV" \
+              --cji-name $CJI_NAME \
+              $SELENIUM_ARG \
+              --namespace $NAMESPACE)
