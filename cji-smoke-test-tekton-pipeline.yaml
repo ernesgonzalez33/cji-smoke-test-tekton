@@ -79,33 +79,76 @@ spec:
         - name: namespace
           value: "$(params.namespace)"
       taskSpec:
+        params:
+          - name: component-name
+            type: string
+            description: name of ClowdApp to run tests against /  app-sre "resourceTemplate"
+          - name: iqe-marker-expression
+            type: string
+            description: "something AND something_else -- pytest marker, can be \"\" if no filter desired"
+            default: ""
+          - name: iqe-filter-expression
+            type: string
+            description: "something AND something_else -- pytest filter, can be \"\" if no filter desired"
+            default: ""
+          - name: iqe-image-tag
+            type: string
+            description: "something -- image tag to use for IQE pod, leave unset to use ClowdApp's iqePlugin value"
+            default: ""
+          - name: iqe-requirements
+            type: string
+            description: "something,something_else -- iqe requirements filter, can be \"\" if no filter desired"
+            default: ""
+          - name: iqe-requirements-priority
+            type: string
+            description: "something,something_else -- iqe requirements priorities filter, can be \"\" if no filter desired"
+            default: ""
+          - name: iqe-test-importance
+            type: string
+            description: "something,something_else -- iqe test importance filter, can be \"\" if no filter desired"
+            default: ""
+          - name: iqe-plugins
+            type: string
+            description: "plugin1,plugin2 -- IQE plugins to run tests for, leave unset to use ClowdApp's iqePlugin value"
+            default: ""
+          - name: iqe-env
+            type: string
+            description: "something -- value to set for ENV_FOR_DYNACONF, default is \"clowder_smoke\""
+            default: "clowder_smoke"
+          - name: iqe-selenium
+            type: string
+            description: "true -- whether to run IQE pod with a selenium container, default is false"
+            default: "false"
+          - name: namespace
+            type: string
+            description: "mynamespace -- namespace to deploy iqe pod into, usually already set by 'deploy_ephemeral_env.sh'"
         steps:
           - name: run-script
             env:
               - name: COMPONENT_NAME
-                value: (params.component-name)
+                value: "$(params.component-name)"
               - name: IQE_MARKER_EXPRESSION
-                value: (params.iqe-marker-expression)
+                value: "$(params.iqe-marker-expression)"
               - name: IQE_FILTER_EXPRESSION
-                value: (params.iqe-filter-expression)
+                value: "$(params.iqe-filter-expression)"
               - name: IQE_IMAGE_TAG
-                value: (params.iqe-image-tag)
+                value: "$(params.iqe-image-tag)"
               - name: IQE_REQUIREMENTS
-                value: (params.iqe-requirements)
+                value: "$(params.iqe-requirements)"
               - name: IQE_REQUIREMENTS_PRIORITY
-                value: (params.iqe-requirements-priority)
+                value: "$(params.iqe-requirements-priority)"
               - name: IQE_TEST_IMPORTANCE
-                value: (params.iqe-test-importance)
+                value: "$(params.iqe-test-importance)"
               - name: IQE_PLUGINS
-                value: (params.iqe-plugins)
+                value: "$(params.iqe-plugins)"
               - name: IQE_ENV
-                value: (params.iqe-env)
+                value: "$(params.iqe-env)"
               - name: CJI_NAME
-                value: (params.component-name)
+                value: "$(params.component-name)"
               - name: IQE_SELENIUM
-                value: (params.iqe-selenium)
+                value: "$(params.iqe-selenium)"
               - name: NAMESPACE
-                value: (params.namespace)
+                value: "$(params.namespace)"
             image: quay.io/ernesgonzalez33/bonfire:latest
             script: |
               SELENIUM_ARG=""
@@ -113,6 +156,7 @@ spec:
                   SELENIUM_ARG=" --selenium "
               fi
 
+              set -x
               bonfire deploy-iqe-cji $COMPONENT_NAME \
               --marker "$IQE_MARKER_EXPRESSION" \
               --filter "$IQE_FILTER_EXPRESSION" \
