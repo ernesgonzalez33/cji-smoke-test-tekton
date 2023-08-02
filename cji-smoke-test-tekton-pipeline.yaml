@@ -22,7 +22,7 @@ spec:
     - name: iqe-image-tag
       type: string
       description: "something -- image tag to use for IQE pod, leave unset to use ClowdApp's iqePlugin value"
-      default: "10m"
+      default: ""
     - name: iqe-requirements
       type: string
       description: "something,something_else -- iqe requirements filter, can be \"\" if no filter desired"
@@ -38,6 +38,7 @@ spec:
     - name: iqe-plugins
       type: string
       description: "plugin1,plugin2 -- IQE plugins to run tests for, leave unset to use ClowdApp's iqePlugin value"
+      default: ""
     - name: iqe-env
       type: string
       description: "something -- value to set for ENV_FOR_DYNACONF, default is \"clowder_smoke\""
@@ -123,4 +124,4 @@ spec:
               --env "$IQE_ENV" \
               --cji-name $CJI_NAME \
               $SELENIUM_ARG \
-              --namespace $NAMESPACE)
+              --namespace $NAMESPACE
