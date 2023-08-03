@@ -122,6 +122,10 @@ spec:
           - name: namespace
             type: string
             description: "mynamespace -- namespace to deploy iqe pod into, usually already set by 'deploy_ephemeral_env.sh'"
+          - name: iqe-cji-timeout
+            type: string
+            description: timeout value to pass to the CJI test, should be slightly higher than expected test run time
+            default: "10m"
         steps:
           - name: run-script
             env:
@@ -169,3 +173,12 @@ spec:
               --cji-name $CJI_NAME \
               $SELENIUM_ARG \
               --namespace $NAMESPACE
+          - name: wait-for-job
+            image: quay.io/ernesgonzalez33/bonfire:latest
+            env:
+              - name: IQE_CJI_TIMEOUT
+                value: "$(params.iqe-cji-timeout)"
+              - name: CJI_NAME
+                value: "$(params.component-name)"
+            script: |
+              oc wait --timeout=$IQE_CJI_TIMEOUT --for=condition=JobInvocationComplete -n $NAMESPACE cji/$CJI_NAME
