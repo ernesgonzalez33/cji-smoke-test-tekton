@@ -3,6 +3,9 @@ kind: Task
 metadata:
   name: call-bonfire
 spec:
+  results:
+    - name: pod-name
+      description: Pod name
   params:
     - name: component-name
       type: string
@@ -85,7 +88,7 @@ spec:
         fi
 
         set -x
-        bonfire deploy-iqe-cji $COMPONENT_NAME \
+        POD=$(bonfire deploy-iqe-cji $COMPONENT_NAME \
         --marker "$IQE_MARKER_EXPRESSION" \
         --filter "$IQE_FILTER_EXPRESSION" \
         --image-tag "${IQE_IMAGE_TAG}" \
@@ -96,7 +99,8 @@ spec:
         --env "$IQE_ENV" \
         --cji-name $CJI_NAME \
         $SELENIUM_ARG \
-        --namespace $NAMESPACE
+        --namespace $NAMESPACE)
+        echo $POD > "$(results.pod-name.path)"
     - name: wait-for-job
       image: quay.io/ernesgonzalez33/bonfire:latest
       env:

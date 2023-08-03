@@ -80,3 +80,13 @@ spec:
           value: "$(params.iqe-selenium)"
         - name: namespace
           value: "$(params.namespace)"
+    - name: minio-setup
+      runAfter:
+        - "call-bonfire"
+      taskRef:
+        name: minio-setup
+      params:
+        - name: namespace
+          value: "$(params.namespace)"
+        - name: pod-name
+          value: "$(tasks.call-bonfire.results.pod-name)"
